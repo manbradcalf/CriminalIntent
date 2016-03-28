@@ -77,6 +77,8 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            int changedItemPosition = getAdapterPosition();
+            mAdapter.setChangedItemPosition(changedItemPosition);
             startActivity(intent);
         }
     }
@@ -84,6 +86,7 @@ public class CrimeListFragment extends Fragment {
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
 
         private List<Crime> mCrimes;
+        private int mChangedItemPosition;
 
         public CrimeAdapter(List<Crime> crimes) {
                 mCrimes = crimes;
@@ -107,7 +110,16 @@ public class CrimeListFragment extends Fragment {
             public int getItemCount() {
                 return mCrimes.size();
             }
+
+        public int getChangedItemPosition() {
+            return mChangedItemPosition;
         }
+
+        public void setChangedItemPosition(int changedItemPosition) {
+            mChangedItemPosition = changedItemPosition;
+
+        }
+    }
 
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
@@ -116,10 +128,11 @@ public class CrimeListFragment extends Fragment {
         if (mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
         } else {
-            mAdapter.notifyDataSetChanged();
+            int position = mAdapter.getChangedItemPosition();
+            mAdapter.notifyItemChanged(position);
         }
         mCrimeRecyclerView.setAdapter(mAdapter);
-        }
+    }
     }
 
 
